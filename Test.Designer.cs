@@ -170,6 +170,6 @@
         private Button viptab;
         private TableLayoutPanel layout_table;
         private TableLayoutPanel t_layout2;
-        public Panel panel;
+        public static Panel panel;
     }
 }
