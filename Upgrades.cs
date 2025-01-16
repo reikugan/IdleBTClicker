@@ -23,6 +23,7 @@ namespace IdleBTClicker
         public Upgrades(Player player)
         {
             InitializeComponent();
+            this.MaximizeBox = false;
             int stakemulti;
             p = player;
             money_lbl.Visible = false;
@@ -147,14 +148,14 @@ namespace IdleBTClicker
                 {
                     Test.pricediscount = 1 - Upgrades.GetUpgradeBonus("upcoinprice", Player.GetUpgradeLvl(Test.player.id, "upcoinprice"));
                     
-                    foreach (Control cntr in Test.panel.Controls)
+                    foreach (Control ctrl in Test.panel.Controls)
                     {
-                        cntr.Dispose();
+                        ctrl.Dispose();
                     }
                     Test.panel.Controls.Clear();
                     Test.player.incpersec = 0;
                     Test.passiveIncUpd();
-                    Test.ListCoins();
+                    Test.ListCoins(Test.panel);
                 }
 
                 Button button = sender as Button;

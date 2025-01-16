@@ -10,8 +10,10 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
+using System.Timers;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
 
 namespace IdleBTClicker
 {
@@ -19,7 +21,7 @@ namespace IdleBTClicker
     {
         //List<Coin> coinList = new List<Coin>() { new Coin("Ada", 100, 1), new Coin("TRX", 250, 3), new Coin("Matic", 1000, 7), new Coin("DYDX", 5000, 10) };
         public static List<Coin> coinList = Program.GetCoins();
-        System.Timers.Timer timer;
+        System.Windows.Forms.Timer timer;
         public static Player player;
         static CultureInfo usCulture = new CultureInfo("en-US");
 
@@ -28,16 +30,23 @@ namespace IdleBTClicker
         public static double stakemulti;
         public static double pricediscount;
 
-        //static Panel pane = new Panel();
 
+        //Creating dynamic labels
         static Label usdt = new Label();
         static Label passive_inc = new Label();
         public static Label cpc_lbl = new();
+
+
+        //Lists and variables for animation
+        private List<Label> activeLabels = new List<Label>();
+        private List<System.Windows.Forms.Timer> activeTimers = new List<System.Windows.Forms.Timer>();
+        private float opacity = 1.0f;
 
         public Test(Player p)
         {
 
             InitializeComponent();
+            this.MaximizeBox = false;
             this.FormClosing += new FormClosingEventHandler(QuitGame);
             player = p;
 
@@ -52,48 +61,64 @@ namespace IdleBTClicker
             }
 
 
-            db_test.Visible = false;
+            //db_test.Visible = false;
 
             usdt.ForeColor = Color.SpringGreen;
             usdt.Font = new Font("Ebrima", 14F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            usdt.Location = new Point(12, 9);
+            //usdt.Location = new Point(12, 9);
             usdt.AutoSize = true;
+            usdt.Dock = DockStyle.Fill;
+            usdt.TextAlign = ContentAlignment.TopCenter;
+            usdt.Anchor = AnchorStyles.Top;
             usdt.Text = $"USDT: {player.usdt.ToString("C0", usCulture)}";
-            Controls.Add(usdt);
+            t_layout2.Controls.Add(usdt, 0, 0);
+            //Controls.Add(usdt);
 
             passive_inc.ForeColor = Color.Gold;
-            passive_inc.Font = new Font("Ebrima", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            passive_inc.Location = new Point(18, 356);
+            passive_inc.Font = new Font("Ebrima", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            //passive_inc.Location = new Point(18, 356);
+            passive_inc.Dock = DockStyle.Fill;
             passive_inc.AutoSize = true;
+            passive_inc.TextAlign = ContentAlignment.MiddleCenter;
+            passive_inc.Anchor = AnchorStyles.Bottom;
             passive_inc.Text = "Passive income: " + (player.incpersec * stakemulti).ToString("C0", usCulture);
-            Controls.Add(passive_inc);
+            t_layout2.Controls.Add(passive_inc, 0, 1);
+            //Controls.Add(passive_inc);
 
             cpc_lbl.ForeColor = Color.Gold;
+            cpc_lbl.BackColor = Color.Transparent;
             cpc_lbl.Font = new Font("Ebrima", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            cpc_lbl.Location = new Point(383, 356);
+            //cpc_lbl.Location = new Point(383, 356);
+            cpc_lbl.Dock = DockStyle.Fill;
             cpc_lbl.AutoSize = true;
+            cpc_lbl.TextAlign = ContentAlignment.BottomRight;
+            cpc_lbl.Anchor = AnchorStyles.Bottom;
             cpc_lbl.Text = "Click mine: " + FormatNum(player.clickmine * clickmulti, usCulture);
-            Controls.Add(cpc_lbl);
+            layout_table.Controls.Add(cpc_lbl, 1, 2);
+            //Controls.Add(cpc_lbl);
 
-            /**
-            pane.AutoSizeMode = AutoSizeMode.GrowOnly;
-            pane.AutoSize = true;
-            pane.Location = new Point(6, 22);
-            pane.Size = new Size(548, 291);
-            pane.AutoScroll = true;
-            assetbox.Controls.Add(pane);
-            **/
+            /*
+            panel.AutoSizeMode = AutoSizeMode.GrowOnly;
+            panel.AutoSize = true;
+            panel.Location = new Point(6, 22);
+            panel.Size = new Size(548, 291);
+            panel.AutoScroll = true;
+            assetbox.Controls.Add(panel);
+            */
+
 
             main_btn.FlatAppearance.MouseOverBackColor = Color.Transparent;
             main_btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
-        
+
 
             Program.clickUpPrice = Math.Floor(Program.clickUpPrice * Math.Pow(1.75, player.clickmine));
             clicklvl.Text = "Level Up\n" + FormatNum(Program.clickUpPrice, usCulture);
-            ListCoins();
-            timer = new System.Timers.Timer();
+            ListCoins(panel);
+
+            //Timer for passive income addition to players balance each second
+            timer = new System.Windows.Forms.Timer();
             timer.Interval = 1000;
-            timer.Elapsed += Timer_Elapsed;
+            timer.Tick += Timer_Tick;
             timer.Start();
 
             var secspast = DateTimeOffset.UtcNow.ToUnixTimeSeconds() - player.offlinefor;
@@ -112,16 +137,25 @@ namespace IdleBTClicker
             usdtupdate();
         }
 
-        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        private void Timer_Tick(object? sender, EventArgs e)
         {
             player.usdt += player.incpersec * stakemulti;
             usdtupdate();
         }
 
+        /*
+        private void Timer_Elapsed(object sender, EventArgs e)
+        {
+            player.usdt += player.incpersec * stakemulti;
+            usdtupdate();
+        }
+        */
+
         private void main_btn_Click(object sender, EventArgs e)
         {
             player.usdt += player.clickmine * clickmulti;
             usdtupdate();
+            //Animate();
         }
 
 
@@ -183,6 +217,7 @@ namespace IdleBTClicker
         public static void usdtupdate()
         {
             usdt.Text = $"USDT: {player.usdt.ToString("C0", usCulture)}";
+            usdt.Invalidate();
         }
 
         public static void passiveIncUpd()
@@ -194,7 +229,7 @@ namespace IdleBTClicker
 
 
         //                                                      Drawing panel with coins:
-        public static void ListCoins()
+        public static void ListCoins(Panel panel)
         {
             int x = 1;
             int y = 1;
@@ -273,7 +308,7 @@ namespace IdleBTClicker
                 //'Buy' button
                 Button button = new Button();
                 button.Size = new Size(75, 55);
-                button.BackColor = Color.Gold;
+                button.BackColor = Color.Cyan;
                 button.ForeColor = Color.DarkGreen;
                 button.Location = new Point(440, 18);
                 button.Text = "Buy\n" + FormatNum(c.price * pricediscount, usCulture);
@@ -352,6 +387,55 @@ namespace IdleBTClicker
         private void passive_inc_Click(object sender, EventArgs e)
         {
 
+        }
+
+
+
+        private void Animate()
+        {          
+            Point cursorPosition = this.PointToClient(Cursor.Position);
+
+            //Label settings
+            Label newLabel = new Label();
+            newLabel.Text = $" +{player.clickmine + clickmulti}$";
+            newLabel.AutoSize = true;
+            newLabel.Location = cursorPosition;
+            newLabel.Visible = true;
+            newLabel.ForeColor = Color.SpringGreen;
+            newLabel.BackColor = Color.Transparent;
+            newLabel.Parent = this;
+
+            this.Controls.Add(newLabel);
+            //this.Controls.SetChildIndex(newLabel, 0);
+            newLabel.BringToFront();
+            activeLabels.Add(newLabel);
+
+            System.Windows.Forms.Timer lblTimer = new System.Windows.Forms.Timer();
+            lblTimer.Interval = 20;
+            lblTimer.Tag = newLabel;
+            lblTimer.Tick += (s, args) =>
+            {
+                Label label = (Label)((System.Windows.Forms.Timer)s).Tag;
+
+                //Label movement
+                label.Location = new Point(label.Location.X, label.Location.Y - 2);
+
+                //Label opacity
+                opacity -= 0.05f;
+                label.ForeColor = Color.FromArgb((int)(opacity * 255), label.ForeColor.R, label.ForeColor.G, label.ForeColor.B);
+
+                //Hide label when opacity reaches 0, then refresh opacity
+                if (opacity <= 0)
+                {
+                    label.Visible = false;
+                    lblTimer.Stop();
+                    activeTimers.Remove(lblTimer);
+                    activeLabels.Remove(label);
+                    opacity = 1.0f;
+                }
+            };
+            lblTimer.Start();
+            activeTimers.Add(lblTimer);
         }
     }
 }

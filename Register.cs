@@ -15,6 +15,7 @@ namespace IdleBTClicker
         public Register()
         {
             InitializeComponent();
+            this.MaximizeBox = false;
         }
 
         private void exit_btn_Click(object sender, EventArgs e)
