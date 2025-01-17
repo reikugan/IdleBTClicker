@@ -22,7 +22,7 @@ namespace IdleBTClicker
         //List<Coin> coinList = new List<Coin>() { new Coin("Ada", 100, 1), new Coin("TRX", 250, 3), new Coin("Matic", 1000, 7), new Coin("DYDX", 5000, 10) };
         public static List<Coin> coinList = Program.GetCoins();
         System.Windows.Forms.Timer timer;
-        public static Player player;
+        public static Player? player;
         static CultureInfo usCulture = new CultureInfo("en-US");
 
         public static double clickmulti;
@@ -109,6 +109,7 @@ namespace IdleBTClicker
 
             main_btn.FlatAppearance.MouseOverBackColor = Color.Transparent;
             main_btn.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            panel.HorizontalScroll.Enabled = false;
 
 
             Program.clickUpPrice = Math.Floor(Program.clickUpPrice * Math.Pow(1.75, player.clickmine));
@@ -242,7 +243,7 @@ namespace IdleBTClicker
                 box.Text = "";
                 panel.Controls.Add(box);
                 box.Location = new Point(x, y);
-                box.Size = new Size(520, 83);
+                box.Size = new Size(box.Parent.Width - 25, 85);
                 box.Margin = new Padding(0, 0, 0, 0);
 
                 //icon picture box
@@ -307,15 +308,16 @@ namespace IdleBTClicker
 
                 //'Buy' button
                 Button button = new Button();
-                button.Size = new Size(75, 55);
+                button.Size = new Size(90, 55);
+                //button.Margin = new Padding(0, 15, 0, 15);
+
                 button.BackColor = Color.Cyan;
                 button.ForeColor = Color.DarkGreen;
-                button.Location = new Point(440, 18);
+                button.Location = new Point(450, 20);
                 button.Text = "Buy\n" + FormatNum(c.price * pricediscount, usCulture);
                 button.Font = new Font("Ebrima", 10F, FontStyle.Bold, GraphicsUnit.Point, 0);
                 box.Controls.Add(button);
                 button.Click += (sender, e) => { BuyCoin(sender, e, c, amount); };
-
 
                 y += 80;
             }

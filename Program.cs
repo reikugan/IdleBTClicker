@@ -24,29 +24,12 @@ namespace IdleBTClicker
         public static string playersconnect = $"Data Source={playersdbpath}";
         public static string assetsconnect = $"Data Source={assetsdbpath}";
         public static string upgradesconnect = $"Data Source={upgradesdbpath}";
-        //--------------------------
 
-
-        /*
-        public static string coinsrelpath = Path.Combine(dir, "Resources", "coins.db");
-        public static string playersrelpath = Path.Combine(dir, "Resources", "players.db");
-        public static string assetsrelpath = Path.Combine(dir,"Resources", "assets.db");
-        public static string upgradesrelpath = Path.Combine(dir, "Resources", "upgrades.db");
-
-
-        public static string coinsconnect = $"Data Source={coinsrelpath}";
-        public static string playersconnect = $"Data Source={playersrelpath}";
-        public static string assetsconnect = $"Data Source={assetsrelpath}";
-        public static string upgradesconnect = $"Data Source={upgradesrelpath}";
-        */
 
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            //Application.Run(new BTClicker());
             Application.Run(new LogIn());
 
         }

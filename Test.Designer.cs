@@ -61,7 +61,7 @@
             clicklvl.Dock = DockStyle.Fill;
             clicklvl.FlatStyle = FlatStyle.Popup;
             clicklvl.Font = new Font("Bernard MT Condensed", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            clicklvl.ForeColor = Color.Cyan;
+            clicklvl.ForeColor = Color.Chartreuse;
             clicklvl.Image = Properties.Resources.lvlupbtn;
             clicklvl.Location = new Point(469, 320);
             clicklvl.Name = "clicklvl";
@@ -74,22 +74,23 @@
             // assetbox
             // 
             assetbox.Controls.Add(panel);
+            assetbox.Dock = DockStyle.Bottom;
             assetbox.Font = new Font("Ebrima", 11.25F, FontStyle.Bold, GraphicsUnit.Point, 0);
             assetbox.ForeColor = Color.Gold;
-            assetbox.Location = new Point(12, 380);
+            assetbox.Location = new Point(0, 377);
             assetbox.Name = "assetbox";
-            assetbox.Size = new Size(560, 319);
+            assetbox.Size = new Size(584, 334);
             assetbox.TabIndex = 9;
             assetbox.TabStop = false;
             assetbox.Text = "Assets";
             // 
             // panel
             // 
-            panel.Anchor = AnchorStyles.Top;
             panel.AutoScroll = true;
-            panel.Location = new Point(6, 22);
+            panel.Dock = DockStyle.Fill;
+            panel.Location = new Point(3, 23);
             panel.Name = "panel";
-            panel.Size = new Size(548, 291);
+            panel.Size = new Size(578, 308);
             panel.TabIndex = 0;
             // 
             // viptab
@@ -170,6 +171,6 @@
         private Button viptab;
         private TableLayoutPanel layout_table;
         private TableLayoutPanel t_layout2;
-        public static Panel panel;
+        public Panel panel;
     }
 }

@@ -120,6 +120,7 @@
             ForeColor = SystemColors.ActiveCaption;
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "LogIn";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Log In";
             ResumeLayout(false);
             PerformLayout();
